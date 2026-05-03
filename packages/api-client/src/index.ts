@@ -1,15 +1,35 @@
-// A simple fetch wrapper that will eventually connect to apps/api
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+wconst API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+async function handleResponse(response: Response) {
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API request failed ${response.status}: ${errorText}`);
+  }
+
+  const payload = await response.json().catch(() => null);
+  return payload?.data ?? payload;
+}
 
 export const apiClient = {
-  get: async (endpoint: string) => {
-    // const res = await fetch(\`\${API_BASE_URL}\${endpoint}\`);
-    // return res.json();
-    console.log(\`Mock GET to \${endpoint}\`);
-    return { data: null };
+  get: async <T = any>(endpoint: string): Promise<T> => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+    return handleResponse(response);
   },
-  post: async (endpoint: string, data: any) => {
-    console.log(\`Mock POST to \${endpoint}\`, data);
-    return { data };
-  }
+  post: async <T = any>(endpoint: string, data: any): Promise<T> => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(data),
+    });
+    return handleResponse(response);
+  },
 };
