@@ -1,20 +1,27 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: [
-    "@hrms/ui",
-    "@hrms/auth",
-    "@hrms/employees",
-    "@hrms/departments",
-    "@hrms/attendance",
-    "@hrms/leave",
-    "@hrms/payroll",
-    "@hrms/profile",
-    "@hrms/recruitment",
-    "@hrms/performance",
-    "@hrms/api-client",
-    "@hrms/types"
+    "@repo/ui",
+    "@repo/auth",
+    "@repo/types",
+    "@repo/api-client",
+    "@repo/products",
+    "@repo/stock",
+    "@repo/sales",
+    "@repo/purchases",
+    "@repo/suppliers",
+    "@repo/reports",
+    "@repo/users",
   ],
+  turbopack: {
+    root: path.resolve(__dirname, '../..'),
+  },
 };
 
 export default nextConfig;
- 

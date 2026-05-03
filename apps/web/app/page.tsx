@@ -1,234 +1,93 @@
-"use client";
+import React from 'react';
+import { Package, TrendingUp, Users, ShoppingCart, ArrowRight, ShieldCheck, Zap, BarChart3 } from 'lucide-react';
 
-import React, { useState } from 'react';
-import { Button, Card } from '@hrms/ui';
-import { LoginForm, useAuth } from '@hrms/auth';
-import { EmployeeTable, useEmployees } from '@hrms/employees';
-import { DepartmentList, useDepartments } from '@hrms/departments';
-import { AttendanceWidget } from '@hrms/attendance';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Building2, 
-  Clock, 
-  Calendar, 
-  DollarSign, 
-  UserCircle,
-  LogOut,
-  Bell,
-  Search,
-  Plus
-} from 'lucide-react';
-
-export default function Dashboard() {
-  const { user, login, logout, loading: authLoading } = useAuth();
-  const { employees, loading: employeesLoading } = useEmployees();
-  const { departments, loading: deptsLoading } = useDepartments();
-  const [activeTab, setActiveTab] = useState('dashboard');
-
-  if (authLoading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
-        <LoginForm onLogin={login} onSuccess={() => {}} />
-      </div>
-    );
-  }
-
-  const sidebarItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'employees', icon: Users, label: 'Employees' },
-    { id: 'departments', icon: Building2, label: 'Departments' },
-    { id: 'attendance', icon: Clock, label: 'Attendance' },
-    { id: 'leave', icon: Calendar, label: 'Leave' },
-    { id: 'payroll', icon: DollarSign, label: 'Payroll' },
-    { id: 'profile', icon: UserCircle, label: 'My Profile' },
-  ];
-
+export default function Home() {
   return (
-    <div className="flex h-screen bg-[#F8FAFC] dark:bg-[#020617] overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl flex flex-col">
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <span className="text-white font-bold">H</span>
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/20 blur-[120px] pointer-events-none" />
+
+      {/* Navbar */}
+      <header className="glass sticky top-0 z-50 border-b border-white/5 backdrop-blur-2xl">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+              <Package className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-xl tracking-tight">HRMS Pro</span>
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+              Turbo IMS
+            </span>
           </div>
-
-          <nav className="space-y-1">
-            {sidebarItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  activeTab === item.id 
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-semibold shadow-sm' 
-                    : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-                }`}
-              >
-                <item.icon className="h-5 w-5" />
-                {item.label}
-              </button>
-            ))}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+            <a href="#features" className="hover:text-white transition-colors">Features</a>
+            <a href="#modules" className="hover:text-white transition-colors">Modules</a>
+            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
           </nav>
+          <div className="flex items-center gap-4">
+            <button className="hidden md:block text-sm font-medium text-slate-300 hover:text-white transition-colors">
+              Sign In
+            </button>
+            <button className="btn-primary text-sm px-5 py-2.5">
+              Get Started
+            </button>
+          </div>
         </div>
+      </header>
 
-        <div className="mt-auto p-6 border-t border-slate-200 dark:border-slate-800">
-          <button 
-            onClick={logout}
-            className="flex items-center gap-3 text-slate-500 hover:text-red-500 transition-colors w-full"
-          >
-            <LogOut className="h-5 w-5" />
-            Logout
+      {/* Hero Section */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 pt-20 pb-32 text-center relative z-10">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border-blue-500/30 text-blue-400 text-xs font-medium mb-8 animate-fade-in-up">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+          v2.0 is now live
+        </div>
+        
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight max-w-4xl leading-tight mb-8">
+          Next-Generation <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+            Inventory Management
+          </span>
+        </h1>
+        
+        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mb-12 leading-relaxed">
+          Streamline your supply chain, track inventory in real-time, and make data-driven decisions with the most powerful IMS on the market.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+          <button className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2">
+            Start Free Trial <ArrowRight className="w-4 h-4" />
+          </button>
+          <button className="btn-secondary w-full sm:w-auto">
+            Book a Demo
           </button>
         </div>
-      </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="h-20 border-b border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-slate-900/30 backdrop-blur-md flex items-center justify-between px-8">
-          <div className="relative w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Search anything..." 
-              className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+        {/* Dashboard Preview Cards */}
+        <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
+          <div className="glass-card flex flex-col items-start text-left">
+            <div className="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
+              <ShoppingCart className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Omnichannel Sales</h3>
+            <p className="text-slate-400 text-sm">Sync your inventory across all marketplaces and physical stores instantly.</p>
           </div>
-
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-            </Button>
-            <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-800">
-              <div className="text-right">
-                <p className="text-sm font-bold">{user.firstName} {user.lastName}</p>
-                <p className="text-xs text-slate-500 capitalize">{user.role}</p>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                {user.avatar ? <img src={user.avatar} alt="" /> : <div className="h-full w-full flex items-center justify-center"><UserCircle className="h-6 w-6 text-slate-400" /></div>}
-              </div>
+          <div className="glass-card flex flex-col items-start text-left">
+            <div className="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4">
+              <BarChart3 className="w-6 h-6" />
             </div>
+            <h3 className="text-xl font-bold text-white mb-2">Real-time Analytics</h3>
+            <p className="text-slate-400 text-sm">Get deep insights into your stock levels, fast-moving items, and profitability.</p>
           </div>
-        </header>
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8">
-          {activeTab === 'dashboard' && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-3xl font-bold">Good Morning, {user.firstName}!</h1>
-                  <p className="text-slate-500">Here's what's happening today.</p>
-                </div>
-                <Button className="gap-2">
-                  <Plus className="h-4 w-4" /> Add Record
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="flex items-center gap-4 border-l-4 border-blue-500">
-                  <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                    <Users className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Total Employees</p>
-                    <p className="text-2xl font-bold">{employees.length}</p>
-                  </div>
-                </Card>
-                <Card className="flex items-center gap-4 border-l-4 border-purple-500">
-                  <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                    <Building2 className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Departments</p>
-                    <p className="text-2xl font-bold">{departments.length}</p>
-                  </div>
-                </Card>
-                <Card className="flex items-center gap-4 border-l-4 border-green-500">
-                  <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                    <Calendar className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500">On Leave Today</p>
-                    <p className="text-2xl font-bold">12</p>
-                  </div>
-                </Card>
-                <Card className="flex items-center gap-4 border-l-4 border-orange-500">
-                  <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
-                    <Clock className="h-6 w-6 text-orange-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Late Attendance</p>
-                    <p className="text-2xl font-bold">5</p>
-                  </div>
-                </Card>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2">
-                  <Card>
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-bold">Recent Hires</h2>
-                      <Button variant="ghost" size="sm">View All</Button>
-                    </div>
-                    <EmployeeTable employees={employees.slice(0, 5)} loading={employeesLoading} />
-                  </Card>
-                </div>
-                <div className="space-y-8">
-                  <AttendanceWidget />
-                  <Card>
-                    <h2 className="text-xl font-bold mb-4">Quick Stats</h2>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-500">Active Jobs</span>
-                        <span className="font-bold">8</span>
-                      </div>
-                      <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full w-[65%]"></div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-500">Pending Approvals</span>
-                        <span className="font-bold">4</span>
-                      </div>
-                      <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div className="bg-orange-500 h-full w-[40%]"></div>
-                      </div>
-                    </div>
-                  </Card>
-                </div>
-              </div>
+          <div className="glass-card flex flex-col items-start text-left">
+            <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4">
+              <Zap className="w-6 h-6" />
             </div>
-          )}
-
-          {activeTab === 'employees' && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold">Employee Directory</h1>
-                <Button className="gap-2"><Plus className="h-4 w-4" /> Add Employee</Button>
-              </div>
-              <EmployeeTable employees={employees} loading={employeesLoading} />
-            </div>
-          )}
-
-          {activeTab === 'departments' && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-              <h1 className="text-3xl font-bold">Departments</h1>
-              <DepartmentList departments={departments} />
-            </div>
-          )}
-
-          {/* Other tabs would go here */}
-          {['attendance', 'leave', 'payroll', 'profile'].includes(activeTab) && (
-            <div className="h-full flex items-center justify-center text-slate-500 italic">
-              Module {activeTab} is being implemented...
-            </div>
-          )}
+            <h3 className="text-xl font-bold text-white mb-2">Automated Ordering</h3>
+            <p className="text-slate-400 text-sm">Never run out of stock with smart low-stock alerts and automated purchase orders.</p>
+          </div>
         </div>
       </main>
     </div>
