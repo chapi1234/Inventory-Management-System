@@ -5,5 +5,6 @@ const validate = require('../../middleware/validate');
 const { loginValidation } = require('./validation');
 
 router.post('/login', loginValidation, validate, controller.login);
+router.post('/register', validate, controller.register);
 
 module.exports = router;

@@ -93,10 +93,60 @@ async function remove(req, res, next) {
 
 
 
+async function getProfile(req, res, next) {
+  try {
+    const user = await service.getById(req.user.id);
+    if (!user) return notFound(res, 'User not found');
+    success(res, user);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateProfile(req, res, next) {
+  try {
+    // Only allow updating certain fields (no role/status changes here)
+    const { firstName, lastName, email } = req.body;
+    const result = await service.update(req.user.id, { firstName, lastName, email });
+    if (!result) return notFound(res, 'User not found to update');
+    success(res, result, 'Profile updated successfully');
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateRole(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+    const result = await service.update(id, { role });
+    if (!result) return notFound(res, 'User not found');
+    success(res, result, 'User role updated');
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateStatus(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const result = await service.update(id, { status });
+    if (!result) return notFound(res, 'User not found');
+    success(res, result, 'User status updated');
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = { 
   create, 
   list, 
   getById, 
   update, 
-  remove 
+  remove,
+  getProfile,
+  updateProfile,
+  updateRole,
+  updateStatus
 };
