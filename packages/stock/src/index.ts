@@ -24,5 +24,24 @@ export const useStock = () => {
     return () => { mounted = false; };
   }, []);
 
-  return { stock, loading };
+  const updateStock = async (id: string, quantity: number) => {
+    try {
+      await apiClient.patch(`/stock/${id}`, { quantity });
+      setStock(prev => prev.map(item => 
+        item.id === id ? { ...item, quantity, lastUpdated: new Date().toISOString() } : item
+      ));
+    } catch (error) {
+      console.error('Failed to update stock:', error);
+      throw error;
+    }
+  };
+
+  return { stock, loading, updateStock };
+};
+
+export const useLowStockAlerts = () => {
+  const { stock, loading } = useStock();
+  const alerts = stock.filter(item => item.quantity <= item.minQuantity);
+  
+  return { alerts, loading, hasAlerts: alerts.length > 0 };
 };

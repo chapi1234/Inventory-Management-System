@@ -6,10 +6,23 @@ import { useStock } from '@repo/stock';
 import type { StockItem } from '@repo/types';
 import clsx from 'clsx';
 
-function UpdateStockModal({ item, onClose }: { item: StockItem; onClose: () => void }) {
+function UpdateStockModal({ item, onClose, onUpdate }: { item: StockItem; onClose: () => void; onUpdate: (qty: number, minQty: number, warehouse: string) => Promise<void> }) {
   const [qty, setQty] = useState(item.quantity.toString());
   const [minQty, setMinQty] = useState(item.minQuantity.toString());
   const [warehouse, setWarehouse] = useState(item.warehouse);
+  const [loading, setLoading] = useState(false);
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      await onUpdate(parseInt(qty), parseInt(minQty), warehouse);
+      onClose();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -57,8 +70,10 @@ function UpdateStockModal({ item, onClose }: { item: StockItem; onClose: () => v
           </div>
         </div>
         <div className="modal-footer">
-          <button className="btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn-primary" onClick={onClose}>Save Changes</button>
+          <button className="btn-secondary" onClick={onClose} disabled={loading}>Cancel</button>
+          <button className="btn-primary" onClick={handleSave} disabled={loading}>
+            {loading ? 'Saving...' : 'Save Changes'}
+          </button>
         </div>
       </div>
     </div>
@@ -66,11 +81,18 @@ function UpdateStockModal({ item, onClose }: { item: StockItem; onClose: () => v
 }
 
 export default function StockPage() {
-  const { stock, loading } = useStock();
+  const { stock, loading, updateStock } = useStock();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [warehouseFilter, setWarehouseFilter] = useState('All');
   const [editItem, setEditItem] = useState<StockItem | null>(null);
+
+  const handleUpdate = async (qty: number, minQty: number, warehouse: string) => {
+    if (editItem) {
+      // In a real app, we'd update minQty and warehouse too if API supports it
+      await updateStock(editItem.id, qty);
+    }
+  };
 
   const warehouses = ['All', ...Array.from(new Set(stock.map(s => s.warehouse)))];
 
@@ -90,7 +112,13 @@ export default function StockPage() {
 
   return (
     <div className="space-y-6 animate-fade-in-up">
-      {editItem && <UpdateStockModal item={editItem} onClose={() => setEditItem(null)} />}
+      {editItem && (
+        <UpdateStockModal 
+          item={editItem} 
+          onClose={() => setEditItem(null)} 
+          onUpdate={handleUpdate}
+        />
+      )}
 
       {/* Header */}
       <div className="page-header">

@@ -3,13 +3,96 @@
 import React, { useState } from 'react';
 import { Users, Plus, Search, X, Star, Mail, Phone, MapPin } from 'lucide-react';
 import { useSuppliers } from '@repo/suppliers';
+import type { Supplier } from '@repo/types';
 import clsx from 'clsx';
 
+function SupplierModal({ 
+  supplier, 
+  onClose, 
+  onSave 
+}: { 
+  supplier?: Supplier | null; 
+  onClose: () => void; 
+  onSave: (data: any) => Promise<void> 
+}) {
+  const [name, setName] = useState(supplier?.name ?? '');
+  const [contact, setContact] = useState(supplier?.contactPerson ?? '');
+  const [email, setEmail] = useState(supplier?.email ?? '');
+  const [phone, setPhone] = useState(supplier?.phone ?? '');
+  const [address, setAddress] = useState(supplier?.address ?? '');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await onSave({ name, contactPerson: contact, email, phone, address, status: supplier?.status ?? 'active' });
+      onClose();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2 className="text-lg font-bold text-white">{supplier ? 'Edit Supplier' : 'Add Supplier'}</h2>
+          <button className="btn-icon" onClick={onClose}><X className="w-4 h-4" /></button>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="modal-body space-y-4">
+            <div className="form-group">
+              <label className="form-label">Company Name</label>
+              <input className="form-input" value={name} onChange={e => setName(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Contact Person</label>
+              <input className="form-input" value={contact} onChange={e => setContact(e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="form-group">
+                <label className="form-label">Email</label>
+                <input className="form-input" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Phone</label>
+                <input className="form-input" value={phone} onChange={e => setPhone(e.target.value)} />
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Address</label>
+              <textarea className="form-input min-h-[80px]" value={address} onChange={e => setAddress(e.target.value)} />
+            </div>
+          </div>
+          <div className="modal-footer">
+            <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="submit" className="btn-primary" disabled={loading}>
+              {loading ? 'Saving...' : 'Save Supplier'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export default function SuppliersPage() {
-  const { suppliers, loading } = useSuppliers();
+  const { suppliers, loading, addSupplier, updateSupplier, deleteSupplier } = useSuppliers();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
+
+  const handleSave = async (data: any) => {
+    if (editingSupplier) {
+      await updateSupplier(editingSupplier.id, data);
+    } else {
+      await addSupplier(data);
+    }
+  };
 
   const filtered = suppliers.filter(s => {
     const matchSearch = !search ||
@@ -23,13 +106,23 @@ export default function SuppliersPage() {
 
   return (
     <div className="space-y-6 animate-fade-in-up">
+      {(isModalOpen || editingSupplier) && (
+        <SupplierModal 
+          supplier={editingSupplier} 
+          onClose={() => { setIsModalOpen(false); setEditingSupplier(null); }} 
+          onSave={handleSave} 
+        />
+      )}
       {/* Header */}
       <div className="page-header">
         <div>
           <h1 className="page-title">Suppliers</h1>
           <p className="page-subtitle">Manage your vendor relationships and supplier catalog.</p>
         </div>
-        <button className="btn-primary flex items-center gap-2">
+        <button 
+          className="btn-primary flex items-center gap-2"
+          onClick={() => setIsModalOpen(true)}
+        >
           <Plus className="w-4 h-4" /> Add Supplier
         </button>
       </div>
@@ -171,8 +264,18 @@ export default function SuppliersPage() {
                   <td className="text-slate-400">{supplier.totalOrders ?? 0} orders</td>
                   <td className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="btn-ghost text-xs px-3 py-1.5">Edit</button>
-                      <button className="btn-primary text-xs px-3 py-1.5">New PO</button>
+                      <button 
+                        className="btn-ghost text-xs px-3 py-1.5"
+                        onClick={() => setEditingSupplier(supplier)}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="btn-ghost text-xs px-3 py-1.5 text-red-400 hover:bg-red-500/10"
+                        onClick={() => deleteSupplier(supplier.id)}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>
