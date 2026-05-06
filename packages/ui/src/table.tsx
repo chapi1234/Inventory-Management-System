@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, TdHTMLAttributes, ThHTMLAttributes } from "react";
 
 export const Table = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
   <div className="relative w-full overflow-auto">
@@ -26,14 +26,20 @@ export const TableRow = ({ children, className = "" }: { children: ReactNode; cl
   </tr>
 );
 
-export const TableHead = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <th className={`h-12 px-4 text-left align-middle font-medium text-slate-500 dark:text-slate-400 [&:has([role=checkbox])]:pr-0 ${className}`}>
+export const TableHead = ({ children, className = "", ...props }: ThHTMLAttributes<HTMLTableCellElement>) => (
+  <th 
+    className={`h-12 px-4 text-left align-middle font-medium text-slate-500 dark:text-slate-400 [&:has([role=checkbox])]:pr-0 ${className}`}
+    {...props}
+  >
     {children}
   </th>
 );
 
-export const TableCell = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-  <td className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${className}`}>
+export const TableCell = ({ children, className = "", ...props }: TdHTMLAttributes<HTMLTableCellElement>) => (
+  <td 
+    className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${className}`}
+    {...props}
+  >
     {children}
   </td>
 );

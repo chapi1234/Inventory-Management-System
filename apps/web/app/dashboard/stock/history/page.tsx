@@ -1,7 +1,7 @@
 'use client';
 
 import { useStockHistory } from '@repo/stock';
-import { Table, TableHeader, TableBody, TableRow, TableCell } from '@repo/ui/table';
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@repo/ui/table';
 import { Badge } from '@repo/ui/badge';
 
 export default function StockHistoryPage() {
@@ -29,12 +29,12 @@ export default function StockHistoryPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableCell isHeader>Timestamp</TableCell>
-              <TableCell isHeader>Product</TableCell>
-              <TableCell isHeader>Type</TableCell>
-              <TableCell isHeader>Quantity</TableCell>
-              <TableCell isHeader>Reason</TableCell>
-              <TableCell isHeader>User</TableCell>
+              <TableHead>Timestamp</TableHead>
+              <TableHead>Product</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Quantity</TableHead>
+              <TableHead>Reason</TableHead>
+              <TableHead>User</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

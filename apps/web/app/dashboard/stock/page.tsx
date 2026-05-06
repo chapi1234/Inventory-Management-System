@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Boxes, Search, X, AlertTriangle, CheckCircle, XCircle, ArrowUpDown, Edit2, History, ShoppingCart } from 'lucide-react';
+import { Boxes, Search, X, AlertTriangle, CheckCircle, XCircle, ArrowUpDown, Edit2, Clock, ShoppingCart } from 'lucide-react';
 import { useStock } from '@repo/stock';
 import { useSuppliers } from '@repo/suppliers';
 import type { StockItem } from '@repo/types';
@@ -141,7 +141,7 @@ export default function StockPage() {
         </div>
         <div className="flex gap-3">
           <Link href="/dashboard/stock/history" className="btn-secondary flex items-center gap-2">
-            <History className="w-4 h-4" /> History
+            <Clock className="w-4 h-4" /> History
           </Link>
           <button className="btn-secondary flex items-center gap-2">
             <ArrowUpDown className="w-4 h-4" /> Transfer Stock
