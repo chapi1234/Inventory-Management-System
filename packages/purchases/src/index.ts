@@ -24,5 +24,16 @@ export const usePurchases = () => {
     return () => { mounted = false; };
   }, []);
 
-  return { purchases, loading };
+  const createPurchaseOrder = async (data: Partial<PurchaseOrder>) => {
+    try {
+      const response = await apiClient.post<PurchaseOrder>('/purchases', data);
+      setPurchases(prev => [response, ...prev]);
+      return response;
+    } catch (error) {
+      console.error('Failed to create purchase order:', error);
+      throw error;
+    }
+  };
+
+  return { purchases, loading, createPurchaseOrder };
 };

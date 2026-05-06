@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Boxes, Search, X, AlertTriangle, CheckCircle, XCircle, ArrowUpDown, Edit2 } from 'lucide-react';
+import { Boxes, Search, X, AlertTriangle, CheckCircle, XCircle, ArrowUpDown, Edit2, History, ShoppingCart } from 'lucide-react';
 import { useStock } from '@repo/stock';
+import { useSuppliers } from '@repo/suppliers';
 import type { StockItem } from '@repo/types';
+import Link from 'next/link';
+import { PurchaseOrderModal } from './components/PurchaseOrderModal';
 import clsx from 'clsx';
 
 function UpdateStockModal({ item, onClose, onUpdate }: { item: StockItem; onClose: () => void; onUpdate: (qty: number, minQty: number, warehouse: string) => Promise<void> }) {
@@ -82,14 +85,15 @@ function UpdateStockModal({ item, onClose, onUpdate }: { item: StockItem; onClos
 
 export default function StockPage() {
   const { stock, loading, updateStock } = useStock();
+  const { suppliers } = useSuppliers();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [warehouseFilter, setWarehouseFilter] = useState('All');
   const [editItem, setEditItem] = useState<StockItem | null>(null);
+  const [poItem, setPoItem] = useState<StockItem | null>(null);
 
   const handleUpdate = async (qty: number, minQty: number, warehouse: string) => {
     if (editItem) {
-      // In a real app, we'd update minQty and warehouse too if API supports it
       await updateStock(editItem.id, qty);
     }
   };
@@ -120,15 +124,29 @@ export default function StockPage() {
         />
       )}
 
+      {poItem && (
+        <PurchaseOrderModal
+          item={poItem}
+          suppliers={suppliers}
+          isOpen={!!poItem}
+          onClose={() => setPoItem(null)}
+        />
+      )}
+
       {/* Header */}
       <div className="page-header">
         <div>
           <h1 className="page-title">Stock Management</h1>
           <p className="page-subtitle">Monitor inventory levels across all warehouses in real-time.</p>
         </div>
-        <button className="btn-secondary flex items-center gap-2">
-          <ArrowUpDown className="w-4 h-4" /> Transfer Stock
-        </button>
+        <div className="flex gap-3">
+          <Link href="/dashboard/stock/history" className="btn-secondary flex items-center gap-2">
+            <History className="w-4 h-4" /> History
+          </Link>
+          <button className="btn-secondary flex items-center gap-2">
+            <ArrowUpDown className="w-4 h-4" /> Transfer Stock
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -164,7 +182,12 @@ export default function StockPage() {
             {outOfStock > 0 && `${outOfStock} items are out of stock. `}
             {lowStock > 0 && `${lowStock} items are running low and need replenishment.`}
           </span>
-          <button className="ml-auto btn-primary text-xs px-3 py-1.5 shrink-0">Create PO</button>
+          <button 
+            className="ml-auto btn-primary text-xs px-3 py-1.5 shrink-0"
+            onClick={() => setPoItem(filtered.find(i => i.status !== 'in_stock') || null)}
+          >
+            Create PO
+          </button>
         </div>
       )}
 
@@ -284,12 +307,22 @@ export default function StockPage() {
                       )}
                     </td>
                     <td className="text-right">
-                      <button
-                        className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5 ml-auto"
-                        onClick={() => setEditItem(item)}
-                      >
-                        <Edit2 className="w-3 h-3" /> Update
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        {item.status !== 'in_stock' && (
+                          <button
+                            className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5 bg-indigo-600 border-indigo-500 hover:bg-indigo-500"
+                            onClick={() => setPoItem(item)}
+                          >
+                            <ShoppingCart className="w-3 h-3" /> Order
+                          </button>
+                        )}
+                        <button
+                          className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5"
+                          onClick={() => setEditItem(item)}
+                        >
+                          <Edit2 className="w-3 h-3" /> Update
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

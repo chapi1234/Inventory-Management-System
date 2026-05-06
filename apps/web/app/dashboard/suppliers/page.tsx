@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Users, Plus, Search, X, Star, Mail, Phone, MapPin } from 'lucide-react';
-import { useSuppliers } from '@repo/suppliers';
-import type { Supplier } from '@repo/types';
+import { Users, Plus, Search, X, Star, Mail, Phone, MapPin, TrendingUp } from 'lucide-react';
+import { useSuppliers, useSupplierPerformance } from '@repo/suppliers';
+import type { Supplier, SupplierPerformance } from '@repo/types';
+import { PerformanceCard } from './components/PerformanceCard';
 import clsx from 'clsx';
 
 function SupplierModal({ 
@@ -81,6 +82,7 @@ function SupplierModal({
 
 export default function SuppliersPage() {
   const { suppliers, loading, addSupplier, updateSupplier, deleteSupplier } = useSuppliers();
+  const { performance, loading: loadingPerformance } = useSupplierPerformance();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,6 +128,11 @@ export default function SuppliersPage() {
           <Plus className="w-4 h-4" /> Add Supplier
         </button>
       </div>
+
+      {/* Performance Overview */}
+      {!loadingPerformance && performance && !Array.isArray(performance) && (
+        <PerformanceCard metrics={performance as SupplierPerformance} />
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
