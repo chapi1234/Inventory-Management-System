@@ -106,6 +106,47 @@ export interface Report {
   createdAt: string;
 }
 
+export interface StockMovement {
+  id: string;
+  productId: string;
+  type: 'in' | 'out' | 'adjustment';
+  quantity: number;
+  reason: string;
+  user: string;
+  timestamp: string;
+}
+
+export interface PurchaseItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitCost: number;
+  subtotal: number;
+}
+
+export interface PurchaseOrder {
+  id: string;
+  poNumber: string;
+  supplierId: string;
+  supplierName: string;
+  items: PurchaseItem[];
+  totalAmount: number;
+  status: 'draft' | 'ordered' | 'received' | 'cancelled';
+  paymentStatus: 'unpaid' | 'paid' | 'partial';
+  expectedDeliveryDate?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface SupplierPerformance {
+  supplierId: string;
+  onTimeDeliveryRate: number;
+  averageLeadTime: number; // in days
+  orderAccuracy: number;
+  totalOrders: number;
+  totalSpent: number;
+}
+
 export interface AuthResponse {
   user: User;
   token: string;
