@@ -9,7 +9,33 @@ export const useProducts = () => {
   useEffect(() => {
     let mounted = true;
 
-    const fetchProducts = async () => {
+    const createProduct = async (product) => {
+    try {
+        const response = await apiClient.post('/products', product);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to create product:', error);
+    }
+};
+
+const updateProduct = async (id, product) => {
+    try {
+        const response = await apiClient.put(`/products/${id}`, product);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to update product:', error);
+    }
+};
+
+const deleteProduct = async (id) => {
+    try {
+        await apiClient.delete(`/products/${id}`);
+    } catch (error) {
+        console.error('Failed to delete product:', error);
+    }
+};
+
+const fetchProducts = async () => {
       try {
         const data = await apiClient.get<Product[]>('/products');
         if (mounted) setProducts(data ?? []);
